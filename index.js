@@ -17,7 +17,7 @@ function randomString(length) {
 }
 
 
-//async-await
+//Promise.all
 function writeFilePromise(fileLocation, result) {
     return new Promise((resolve, reject) => {
         fs.writeFile(fileLocation, result, (err) => {
@@ -30,24 +30,71 @@ function writeFilePromise(fileLocation, result) {
 }
 async function getRandomPic() {
     try {
-      const res = await superagent.get(`https://robohash.org/${randomString(6)}`)
-      console.log('Random image is ', res.request.url)
-      await writeFilePromise('./randomImage.txt', res.request.url)
-      console.log('sucessfully written the file')
+        const res1 = await superagent.get(`https://robohash.org/${randomString(6)}`)
+        console.log('Random image is ', res1.request.url)
+        const res2 = await superagent.get(`https://robohash.org/${randomString(6)}`)
+        console.log('Random image is ', res2.request.url)
+        const res3 = await superagent.get(`https://robohash.org/${randomString(6)}`)
+        console.log('Random image is ', res3.request.url)
+
+        const all = await Promise.all([res1, res2, res3])
+        const images = all.map((el) => el.request.url)
+        console.log(images);
+        await writeFilePromise('./randomImage.txt', images.join("\n"))
+        console.log('sucessfully written the file')
     } catch (err) {
-      throw err
+        throw err
     }
     console.log('2. complete')
-  }
-  console.log('1. start')
-  ;(async () => {
-    try {
-      await getRandomPic()
-      console.log('3. end')
-    } catch (err) {
-      console.log('3. end due to error')
-    }
-  })()
+}
+console.log('1. start')
+    ; (async () => {
+        try {
+            await getRandomPic()
+            console.log('3. end')
+        } catch (err) {
+            console.log('3. end due to error')
+        }
+    })()
+
+
+
+
+
+
+
+
+//async-await
+// function writeFilePromise(fileLocation, result) {
+//     return new Promise((resolve, reject) => {
+//         fs.writeFile(fileLocation, result, (err) => {
+//             if (err) {
+//                 reject('not able to write to the file')
+//             }
+//             resolve()
+//         })
+//     })
+// }
+// async function getRandomPic() {
+//     try {
+//         const res = await superagent.get(`https://robohash.org/${randomString(6)}`)
+//         console.log('Random image is ', res.request.url)
+//         await writeFilePromise('./randomImage.txt', res.request.url)
+//         console.log('sucessfully written the file')
+//     } catch (err) {
+//         throw err
+//     }
+//     console.log('2. complete')
+// }
+// console.log('1. start')
+//     ; (async () => {
+//         try {
+//             await getRandomPic()
+//             console.log('3. end')
+//         } catch (err) {
+//             console.log('3. end due to error')
+//         }
+//     })()
 
 
 
